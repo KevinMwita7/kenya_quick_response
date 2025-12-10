@@ -20,7 +20,7 @@ class QrCodeParser {
 
     final crcValue = crcData.substring(4);
 
-    var calculatedCrc = Crc16CcittFalse().convert(utf8.encode(payloadWithoutCrc + '6304'));
+    var calculatedCrc = Crc16CcittFalse().convert(utf8.encode('${payloadWithoutCrc}6304'));
     var calculatedCrcString =
         calculatedCrc.toRadixString(16).toUpperCase().padLeft(4, '0');
 
@@ -38,6 +38,9 @@ class QrCodeParser {
       }
       return data[tag]!;
     }
+
+    // Check if this is an M-Pesa QR code
+    bool isMpesaQr = data.containsKey('83') && data['83']!.contains('m-pesa.com');
 
     AdditionalData? additionalData;
     if (data.containsKey('62')) {
@@ -58,11 +61,33 @@ class QrCodeParser {
     MerchantInformationLanguageTemplate? merchantInformationLanguageTemplate;
     if (data.containsKey('64')) {
       var merchantInfoMap = _parseTlv(data['64']!);
+      // Create a local helper function for getRequired on merchantInfoMap
+      String getRequiredMerchantInfo(String tag, String fieldName) {
+        if (!merchantInfoMap.containsKey(tag) || merchantInfoMap[tag]!.isEmpty) {
+          throw ArgumentError('Missing or empty $fieldName (Tag $tag) in Merchant Information Language Template.');
+        }
+        return merchantInfoMap[tag]!;
+      }
       merchantInformationLanguageTemplate = MerchantInformationLanguageTemplate(
-        languagePreference: getRequired('00', 'Language Preference'),
-        merchantName: getRequired('01', 'Merchant Name'),
-        merchantCity: getRequired('02', 'Merchant City'),
+        languagePreference: getRequiredMerchantInfo('00', 'Language Preference'),
+        merchantName: getRequiredMerchantInfo('01', 'Merchant Name'),
+        merchantCity: getRequiredMerchantInfo('02', 'Merchant City'),
       );
+    }
+
+    // Conditionally check for mandatory fields
+    String? merchantUssdDisplayedCode;
+    if (!isMpesaQr) {
+      merchantUssdDisplayedCode = getRequired('81', 'Merchant USSD Displayed Code');
+    } else {
+      merchantUssdDisplayedCode = data['81'];
+    }
+
+    String? qrTimestampInformation;
+    if (!isMpesaQr) {
+      qrTimestampInformation = getRequired('82', 'QR Timestamp Information');
+    } else {
+      qrTimestampInformation = data['82'];
     }
 
     return KeqrPayload(
@@ -74,8 +99,8 @@ class QrCodeParser {
       countryCode: getRequired('58', 'Country Code'),
       merchantName: getRequired('59', 'Merchant Name'),
       merchantCity: data['60'], // Optional field
-      merchantUssdDisplayedCode: getRequired('81', 'Merchant USSD Displayed Code'), // Mandatory field
-      qrTimestampInformation: getRequired('82', 'QR Timestamp Information'), // Mandatory field
+      merchantUssdDisplayedCode: merchantUssdDisplayedCode,
+      qrTimestampInformation: qrTimestampInformation,
       additionalData: additionalData,
       merchantInformationLanguageTemplate: merchantInformationLanguageTemplate,
       crc: crcValue,
