@@ -1,4 +1,4 @@
-library keqr;
+library;
 
 export 'src/models/keqr_payload.dart';
 export 'src/models/additional_data.dart';

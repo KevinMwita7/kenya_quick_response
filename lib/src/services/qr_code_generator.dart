@@ -58,10 +58,10 @@ class QrCodeGenerator {
     }
 
     var payloadString = parts.join();
-    var crc = Crc16CcittFalse().convert(utf8.encode(payloadString + '6304'));
+    var crc = Crc16CcittFalse().convert(utf8.encode('${payloadString}6304'));
     var crcString = crc.toRadixString(16).toUpperCase().padLeft(4, '0');
 
-    return payloadString + '6304' + crcString;
+    return '${payloadString}6304$crcString';
   }
 
   static String _tlv(String tag, String value) {

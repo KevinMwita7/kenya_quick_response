@@ -15,7 +15,7 @@ class QrCodeParser {
 
     final crcValue = crcData.substring(4);
 
-    var calculatedCrc = Crc16CcittFalse().convert(utf8.encode(payloadWithoutCrc + '6304'));
+    var calculatedCrc = Crc16CcittFalse().convert(utf8.encode('${payloadWithoutCrc}6304'));
     var calculatedCrcString =
         calculatedCrc.toRadixString(16).toUpperCase().padLeft(4, '0');
 
