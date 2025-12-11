@@ -1,6 +1,7 @@
 import 'additional_data.dart';
 import 'merchant_account_information.dart';
 import 'merchant_information_language_template.dart';
+import 'merchant_premises_location.dart';
 import 'merchant_ussd_information.dart';
 import 'qr_timestamp_information.dart';
 import 'template_information.dart';
@@ -34,6 +35,7 @@ class KeqrPayload {
 
   final AdditionalData? additionalData;
   final MerchantInformationLanguageTemplate? merchantInformationLanguageTemplate;
+  final MerchantPremisesLocation? merchantPremisesLocation;
   final String? crc;
 
   KeqrPayload({
@@ -51,6 +53,7 @@ class KeqrPayload {
     this.additionalTemplates,
     this.additionalData,
     this.merchantInformationLanguageTemplate,
+    this.merchantPremisesLocation,
     this.crc,
   });
 }

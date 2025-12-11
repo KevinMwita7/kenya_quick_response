@@ -43,6 +43,11 @@ void main() {
           merchantName: 'Awesome Merchant',
           merchantCity: 'Nairobi',
         ),
+        merchantPremisesLocation: MerchantPremisesLocation(
+          locationDataProvider: LocationDataProvider.gpsCoordinates,
+          locationData: '-1.286389,36.817223',
+          locationAccuracy: '10',
+        ),
       );
 
       final qrCodeString = QrCodeGenerator.generate(payload);
@@ -85,6 +90,14 @@ void main() {
           payload.merchantInformationLanguageTemplate?.merchantName);
       expect(parsedPayload.merchantInformationLanguageTemplate?.merchantCity,
           payload.merchantInformationLanguageTemplate?.merchantCity);
+
+      // Verify Merchant Premises Location
+      expect(parsedPayload.merchantPremisesLocation?.locationDataProvider,
+          payload.merchantPremisesLocation?.locationDataProvider);
+      expect(parsedPayload.merchantPremisesLocation?.locationData,
+          payload.merchantPremisesLocation?.locationData);
+      expect(parsedPayload.merchantPremisesLocation?.locationAccuracy,
+          payload.merchantPremisesLocation?.locationAccuracy);
     });
   });
 }

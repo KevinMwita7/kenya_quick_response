@@ -4,6 +4,7 @@ import '../models/additional_data.dart';
 import '../models/keqr_payload.dart';
 import '../models/merchant_account_information.dart';
 import '../models/merchant_information_language_template.dart';
+import '../models/merchant_premises_location.dart';
 import '../models/merchant_ussd_information.dart';
 import '../models/qr_timestamp_information.dart';
 import '../models/template_information.dart';
@@ -103,6 +104,30 @@ class QrCodeParser {
       );
     }
 
+    MerchantPremisesLocation? merchantPremisesLocation;
+    if (data.containsKey('80')) {
+      var locationMap = _parseTlv(data['80']!);
+      LocationDataProvider? provider;
+      if (locationMap.containsKey('01')) {
+        switch (locationMap['01']) {
+          case '01':
+            provider = LocationDataProvider.gpsCoordinates;
+            break;
+          case '02':
+            provider = LocationDataProvider.what3words;
+            break;
+          case '03':
+            provider = LocationDataProvider.googlePlusCodes;
+            break;
+        }
+      }
+      merchantPremisesLocation = MerchantPremisesLocation(
+        locationDataProvider: provider,
+        locationData: locationMap['02'],
+        locationAccuracy: locationMap['03'],
+      );
+    }
+
     // Parse Field 81: Merchant USSD Information (nested TLV)
     MerchantUssdInformation? merchantUssdInformation;
     if (data.containsKey('81')) {
@@ -158,6 +183,7 @@ class QrCodeParser {
       additionalTemplates: additionalTemplates.isNotEmpty ? additionalTemplates : null,
       additionalData: additionalData,
       merchantInformationLanguageTemplate: merchantInformationLanguageTemplate,
+      merchantPremisesLocation: merchantPremisesLocation,
       crc: crcValue,
     );
   }

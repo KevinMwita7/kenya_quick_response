@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:crclib/catalog.dart';
 import '../models/keqr_payload.dart';
+import '../models/merchant_premises_location.dart';
 
 class QrCodeGenerator {
   static String generate(KeqrPayload payload) {
@@ -125,6 +126,34 @@ class QrCodeGenerator {
       merchantInfoParts.add(_tlv('01', payload.merchantInformationLanguageTemplate!.merchantName));
       merchantInfoParts.add(_tlv('02', payload.merchantInformationLanguageTemplate!.merchantCity));
       parts.add(_tlv('64', merchantInfoParts.join()));
+    }
+
+    if (payload.merchantPremisesLocation != null) {
+      var locationParts = <String>[];
+      if (payload.merchantPremisesLocation!.locationDataProvider != null) {
+        String providerValue;
+        switch (payload.merchantPremisesLocation!.locationDataProvider!) {
+          case LocationDataProvider.gpsCoordinates:
+            providerValue = '01';
+            break;
+          case LocationDataProvider.what3words:
+            providerValue = '02';
+            break;
+          case LocationDataProvider.googlePlusCodes:
+            providerValue = '03';
+            break;
+        }
+        locationParts.add(_tlv('01', providerValue));
+      }
+      if (payload.merchantPremisesLocation!.locationData != null) {
+        locationParts.add(_tlv('02', payload.merchantPremisesLocation!.locationData!));
+      }
+      if (payload.merchantPremisesLocation!.locationAccuracy != null) {
+        locationParts.add(_tlv('03', payload.merchantPremisesLocation!.locationAccuracy!));
+      }
+      if (locationParts.isNotEmpty) {
+        parts.add(_tlv('80', locationParts.join()));
+      }
     }
 
     var payloadString = parts.join();
