@@ -102,26 +102,26 @@ void main() {
     merchantAccountInformation: [
       MerchantAccountInformation(
         fieldId: '28', // PSP merchant account identifier
-        globallyUniqueIdentifier: 'com.examplepsp.payments',
+        globallyUniqueIdentifier: 'ke.go.qr',
         paymentNetworkSpecificData: {
-          '01': 'MERCHANT789012', // Payment network specific merchant ID
+          '01': '4449562', // Payment network specific merchant ID
         },
       ),
     ],
-    merchantCategoryCode: '4111', // Transportation (Optional now)
+    merchantCategoryCode: '0000', // Transportation (Optional now)
     transactionCurrency: '404', // Kenyan Shilling (ISO 4217 code)
-    transactionAmount: '100.00', // Conditional
     countryCode: 'KE',
-    merchantName: 'Generated Merchant',
+    merchantName: 'Generated merchant',
+    transactionAmount: '100.00', // Conditional
     merchantCity: 'Nairobi', // Optional now
     merchantUssdInformation: MerchantUssdInformation(
-      globallyUniqueIdentifier: 'com.examplepsp.ussd',
+      globallyUniqueIdentifier: 'ke.go.qr',
       paymentNetworkSpecificData: {
         '01': '*123#',
       },
     ),
     qrTimestampInformation: QrTimestampInformation(
-      globallyUniqueIdentifier: 'com.examplepsp.timestamp',
+      globallyUniqueIdentifier: 'ke.go.qr',
       timestampData: {
         '01': '20231210103000',
       },
