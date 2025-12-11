@@ -1,19 +1,15 @@
 import 'package:keqr/keqr.dart';
 
 void main() {
-  // NOTE: The following testQr string has been sanitized to remove PII.
-  // The CRC is intentionally invalidated ('XXXX') because changing the content
-  // requires a new CRC to be calculated. As a result, the parsing logic
-  // in the `try` block is expected to fail with a CRC mismatch error.
+  // The following testQr string has been sanitized to remove PII.
   final testQr =
-      '00020101021228230008ke.go.qr0107987654329120008ke.go.qr5204000053034045802KE5921Jane Elizabeth Doe_Po610200620605020182320008ke.go.qr0116343122025 04124283380010m-pesa.com0102020305000020405000006304XXXX';
+      '00020101021228230008ke.go.qr0107987654329120008ke.go.qr5204000053034045802KE5921Jane Elizabeth Doe_Po610200620605020182320008ke.go.qr0116343122025 04124283380010m-pesa.com01020203050000204050000063041307';
 
   print('''--- Attempting to parse provided QR code string ---''');
   print(testQr);
 
   try {
     var parsedPayload = QrCodeParser.parse(testQr);
-    // This part is not expected to be reached due to the invalid CRC.
     print('\nSuccessfully parsed QR Code String:');
     print('  Payload Format Indicator: ${parsedPayload.payloadFormatIndicator}');
     print(
@@ -25,9 +21,77 @@ void main() {
     print('  Country Code: ${parsedPayload.countryCode}');
     print('  Merchant Name: ${parsedPayload.merchantName}');
     print('  Merchant City: ${parsedPayload.merchantCity ?? "N/A"}');
+
+    // Print Merchant Account Information
+    if (parsedPayload.merchantAccountInformation.isNotEmpty) {
+      print('  Merchant Account Information:');
+      for (var i = 0; i < parsedPayload.merchantAccountInformation.length; i++) {
+        var account = parsedPayload.merchantAccountInformation[i];
+        print('    [${i + 1}] Field ID: ${account.fieldId}');
+        print(
+            '        Globally Unique ID: ${account.globallyUniqueIdentifier ?? "N/A"}');
+        if (account.paymentNetworkSpecificData.isNotEmpty) {
+          print(
+              '        Payment Network Data: ${account.paymentNetworkSpecificData}');
+        }
+        if (account.isPspAccount) {
+          print('        Type: PSP Merchant Account');
+        } else if (account.isBankWalletAccount) {
+          print('        Type: Bank Wallet Merchant Account');
+        }
+      }
+    }
+
+    // Print Merchant USSD Information (nested)
+    if (parsedPayload.merchantUssdInformation != null) {
+      print('  Merchant USSD Information:');
+      print(
+          '    Globally Unique ID: ${parsedPayload.merchantUssdInformation!.globallyUniqueIdentifier ?? "N/A"}');
+      print(
+          '    Payment Network Data: ${parsedPayload.merchantUssdInformation!.paymentNetworkSpecificData}');
+    }
+
+    // Print QR Timestamp Information (nested)
+    if (parsedPayload.qrTimestampInformation != null) {
+      print('  QR Timestamp Information:');
+      print(
+          '    Globally Unique ID: ${parsedPayload.qrTimestampInformation!.globallyUniqueIdentifier ?? "N/A"}');
+      print(
+          '    Timestamp Data: ${parsedPayload.qrTimestampInformation!.timestampData}');
+    }
+
+    // Print Additional Templates (nested)
+    if (parsedPayload.additionalTemplates != null &&
+        parsedPayload.additionalTemplates!.isNotEmpty) {
+      print('  Additional Templates:');
+      for (var i = 0; i < parsedPayload.additionalTemplates!.length; i++) {
+        var template = parsedPayload.additionalTemplates![i];
+        print('    [${i + 1}] Field ID: ${template.fieldId}');
+        print(
+            '        Globally Unique ID: ${template.globallyUniqueIdentifier ?? "N/A"}');
+        print('        Template Data: ${template.templateData}');
+      }
+    }
+
+    if (parsedPayload.additionalData != null) {
+      print('  Additional Data:');
+      print(
+          '    Bill Number: ${parsedPayload.additionalData?.billNumber ?? "N/A"}');
+      print(
+          '    Purpose of Transaction: ${parsedPayload.additionalData?.purposeOfTransaction ?? "N/A"}');
+    }
+    if (parsedPayload.merchantInformationLanguageTemplate != null) {
+      print('  Merchant Information Language Template:');
+      print(
+          '    Language Preference: ${parsedPayload.merchantInformationLanguageTemplate?.languagePreference ?? "N/A"}');
+      print(
+          '    Merchant Name: ${parsedPayload.merchantInformationLanguageTemplate?.merchantName ?? "N/A"}');
+      print(
+          '    Merchant City: ${parsedPayload.merchantInformationLanguageTemplate?.merchantCity ?? "N/A"}');
+    }
+    print('  CRC: ${parsedPayload.crc}');
   } catch (e) {
-    print('\nError parsing QR code (as expected due to invalid CRC):');
-    print(e);
+    print('\nError parsing QR code: $e');
   }
 
   print('\n--- Attempting to generate a new QR code string ---');
