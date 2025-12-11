@@ -35,17 +35,19 @@ class QrCodeGenerator {
       parts.add(_tlv(merchantAccount.fieldId, merchantAccountParts.join()));
     }
 
-    parts.add(_tlv('53', payload.transactionCurrency));
-    parts.add(_tlv('58', payload.countryCode));
-    parts.add(_tlv('59', payload.merchantName));
-
-    // Optional fields
     if (payload.merchantCategoryCode != null) {
       parts.add(_tlv('52', payload.merchantCategoryCode!));
     }
+
+    parts.add(_tlv('53', payload.transactionCurrency));
+
     if (payload.transactionAmount != null) {
       parts.add(_tlv('54', payload.transactionAmount!));
     }
+
+    parts.add(_tlv('58', payload.countryCode));
+    parts.add(_tlv('59', payload.merchantName));
+
     if (payload.merchantCity != null) {
       parts.add(_tlv('60', payload.merchantCity!));
     }
@@ -53,30 +55,7 @@ class QrCodeGenerator {
       parts.add(_tlv('61', payload.postalCode!));
     }
 
-    // Field 81: Merchant USSD Information (nested TLV)
-    if (payload.merchantUssdInformation != null) {
-      var ussdParts = <String>[];
-      if (payload.merchantUssdInformation!.globallyUniqueIdentifier != null) {
-        ussdParts.add(_tlv('00', payload.merchantUssdInformation!.globallyUniqueIdentifier!));
-      }
-      for (var entry in payload.merchantUssdInformation!.paymentNetworkSpecificData.entries) {
-        ussdParts.add(_tlv(entry.key, entry.value));
-      }
-      parts.add(_tlv('81', ussdParts.join()));
-    }
-
-    // Field 82: QR Timestamp Information (nested TLV)
-    if (payload.qrTimestampInformation != null) {
-      var timestampParts = <String>[];
-      if (payload.qrTimestampInformation!.globallyUniqueIdentifier != null) {
-        timestampParts.add(_tlv('00', payload.qrTimestampInformation!.globallyUniqueIdentifier!));
-      }
-      for (var entry in payload.qrTimestampInformation!.timestampData.entries) {
-        timestampParts.add(_tlv(entry.key, entry.value));
-      }
-      parts.add(_tlv('82', timestampParts.join()));
-    }
-
+    // Field 62
     if (payload.additionalData != null) {
       var additionalDataParts = <String>[];
       if (payload.additionalData!.billNumber != null) {
@@ -109,20 +88,7 @@ class QrCodeGenerator {
       parts.add(_tlv('62', additionalDataParts.join()));
     }
 
-    // Fields 83-99: Additional Templates (nested TLV)
-    if (payload.additionalTemplates != null) {
-      for (var template in payload.additionalTemplates!) {
-        var templateParts = <String>[];
-        if (template.globallyUniqueIdentifier != null) {
-          templateParts.add(_tlv('00', template.globallyUniqueIdentifier!));
-        }
-        for (var entry in template.templateData.entries) {
-          templateParts.add(_tlv(entry.key, entry.value));
-        }
-        parts.add(_tlv(template.fieldId, templateParts.join()));
-      }
-    }
-
+    // Field 64
     if (payload.merchantInformationLanguageTemplate != null) {
       var merchantInfoParts = <String>[];
       merchantInfoParts.add(_tlv('00', payload.merchantInformationLanguageTemplate!.languagePreference));
@@ -131,6 +97,7 @@ class QrCodeGenerator {
       parts.add(_tlv('64', merchantInfoParts.join()));
     }
 
+    // Field 80
     if (payload.merchantPremisesLocation != null) {
       var locationParts = <String>[];
       if (payload.merchantPremisesLocation!.locationDataProvider != null) {
@@ -156,6 +123,44 @@ class QrCodeGenerator {
       }
       if (locationParts.isNotEmpty) {
         parts.add(_tlv('80', locationParts.join()));
+      }
+    }
+
+    // Field 81: Merchant USSD Information (nested TLV)
+    if (payload.merchantUssdInformation != null) {
+      var ussdParts = <String>[];
+      if (payload.merchantUssdInformation!.globallyUniqueIdentifier != null) {
+        ussdParts.add(_tlv('00', payload.merchantUssdInformation!.globallyUniqueIdentifier!));
+      }
+      for (var entry in payload.merchantUssdInformation!.paymentNetworkSpecificData.entries) {
+        ussdParts.add(_tlv(entry.key, entry.value));
+      }
+      parts.add(_tlv('81', ussdParts.join()));
+    }
+
+    // Field 82: QR Timestamp Information (nested TLV)
+    if (payload.qrTimestampInformation != null) {
+      var timestampParts = <String>[];
+      if (payload.qrTimestampInformation!.globallyUniqueIdentifier != null) {
+        timestampParts.add(_tlv('00', payload.qrTimestampInformation!.globallyUniqueIdentifier!));
+      }
+      for (var entry in payload.qrTimestampInformation!.timestampData.entries) {
+        timestampParts.add(_tlv(entry.key, entry.value));
+      }
+      parts.add(_tlv('82', timestampParts.join()));
+    }
+
+    // Fields 83-99: Additional Templates (nested TLV)
+    if (payload.additionalTemplates != null) {
+      for (var template in payload.additionalTemplates!) {
+        var templateParts = <String>[];
+        if (template.globallyUniqueIdentifier != null) {
+          templateParts.add(_tlv('00', template.globallyUniqueIdentifier!));
+        }
+        for (var entry in template.templateData.entries) {
+          templateParts.add(_tlv(entry.key, entry.value));
+        }
+        parts.add(_tlv(template.fieldId, templateParts.join()));
       }
     }
 

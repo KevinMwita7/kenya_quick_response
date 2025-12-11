@@ -106,36 +106,22 @@ void main() {
         paymentNetworkSpecificData: {
           '01': '4449562', // Payment network specific merchant ID
         },
-      ),
-      MerchantAccountInformation(
-        fieldId: '29', 
-        paymentNetworkSpecificData: {
-          '00': 'ke.go.qr'
-        }
       )
     ],
+    transactionAmount: '100.00',
     merchantCategoryCode: '0000', // Transportation (Optional now)
     transactionCurrency: '404', // Kenyan Shilling (ISO 4217 code)
     countryCode: 'KE',
     merchantName: 'Faith Chepkirui Kirui',
-    transactionAmount: '100.00', // Conditional
-    merchantCity: 'Nairobi', // Optional now
     postalCode: '00',
-    merchantUssdInformation: MerchantUssdInformation(
-      globallyUniqueIdentifier: 'ke.go.qr',
-      paymentNetworkSpecificData: {
-        '01': '*123#',
-      },
-    ),
     qrTimestampInformation: QrTimestampInformation(
       globallyUniqueIdentifier: 'ke.go.qr',
       timestampData: {
-        '01': '20231210103000',
+        '01': '343122025 041242',
       },
     ),
     additionalData: AdditionalData(
       referenceLabel: '01',
-      purposeOfTransaction: 'Payment',
     ),
     additionalTemplates: [
       TemplateInformation(fieldId: '83', templateData: {'01': '02', '03': '00002', '04': '00000'}, globallyUniqueIdentifier: 'm-pesa.com')
