@@ -114,6 +114,7 @@ void main() {
     merchantName: 'Generated merchant',
     transactionAmount: '100.00', // Conditional
     merchantCity: 'Nairobi', // Optional now
+    postalCode: '00',
     merchantUssdInformation: MerchantUssdInformation(
       globallyUniqueIdentifier: 'ke.go.qr',
       paymentNetworkSpecificData: {
