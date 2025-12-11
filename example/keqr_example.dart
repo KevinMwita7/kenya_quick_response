@@ -107,11 +107,17 @@ void main() {
           '01': '4449562', // Payment network specific merchant ID
         },
       ),
+      MerchantAccountInformation(
+        fieldId: '29', 
+        paymentNetworkSpecificData: {
+          '00': 'ke.go.qr'
+        }
+      )
     ],
     merchantCategoryCode: '0000', // Transportation (Optional now)
     transactionCurrency: '404', // Kenyan Shilling (ISO 4217 code)
     countryCode: 'KE',
-    merchantName: 'Generated merchant',
+    merchantName: 'Faith Chepkirui Kirui',
     transactionAmount: '100.00', // Conditional
     merchantCity: 'Nairobi', // Optional now
     postalCode: '00',
@@ -128,9 +134,12 @@ void main() {
       },
     ),
     additionalData: AdditionalData(
-      billNumber: 'BILL123',
+      referenceLabel: '01',
       purposeOfTransaction: 'Payment',
     ),
+    additionalTemplates: [
+      TemplateInformation(fieldId: '83', templateData: {'01': '02', '03': '00002', '04': '00000'}, globallyUniqueIdentifier: 'm-pesa.com')
+    ]
   );
 
   try {
