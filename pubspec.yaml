@@ -1,14 +1,17 @@
 name: keqr
-description: A starting point for Dart libraries or applications.
+description: A Dart library for generating and parsing KE-QR codes, compliant with the Kenya Quick Response Code Standard 2023.
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+# See LICENSE file for details.
+repository: https://github.com/KevinMwita7/keqr
+homepage: https://github.com/KevinMwita7/keqr
+issue_tracker: https://github.com/KevinMwita7/keqr/issues
 
 environment:
   sdk: ^3.9.0
 
 # Add regular dependencies here.
 dependencies:
-  crclib: any
+  crclib: ^3.0.0
 
 
 dev_dependencies:
