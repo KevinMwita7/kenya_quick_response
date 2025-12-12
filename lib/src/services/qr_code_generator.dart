@@ -322,7 +322,7 @@ class QrCodeGenerator {
             _validateAndTlv(
               '00',
               template.globallyUniqueIdentifier!,
-              parentTag: template.fieldId,
+              parentTag: 'additionalTemplates',
             ),
           );
         }
@@ -331,7 +331,7 @@ class QrCodeGenerator {
             _validateAndTlv(
               entry.key,
               entry.value,
-              parentTag: template.fieldId,
+              parentTag: 'additionalTemplates',
             ),
           );
         }
@@ -375,6 +375,8 @@ class QrCodeGenerator {
       // If no specific definition, assume generic alphanumeric for now
       return '$tag${value.length.toString().padLeft(2, '0')}$value';
     }
+
+    print('Most def $tag:$value');
 
     // Validate type
     switch (definition.type) {
