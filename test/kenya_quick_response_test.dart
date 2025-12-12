@@ -11,7 +11,7 @@ void main() {
           MerchantAccountInformation(
             fieldId: '28',
             globallyUniqueIdentifier: 'com.testpsp.payments',
-            paymentNetworkSpecificData: {'01': 'MERCHANT123456'},
+            paymentNetworkSpecificData: {'01': '1234567890'},
           ),
         ],
         merchantCategoryCode: '4111',
@@ -72,7 +72,7 @@ void main() {
         parsedPayload
             .merchantAccountInformation[0]
             .paymentNetworkSpecificData['01'],
-        'MERCHANT123456',
+        '1234567890',
       );
       expect(parsedPayload.merchantAccountInformation[0].isPspAccount, true);
 
@@ -153,7 +153,7 @@ void main() {
           MerchantAccountInformation(
             fieldId: '28',
             globallyUniqueIdentifier: 'com.testpsp.payments',
-            paymentNetworkSpecificData: {'01': 'MERCHANT123456'},
+            paymentNetworkSpecificData: {'01': '1234567890'},
           ),
         ],
         transactionCurrency: '404',

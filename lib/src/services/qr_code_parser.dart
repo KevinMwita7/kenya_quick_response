@@ -173,7 +173,10 @@ class QrCodeParser {
     for (var i = 83; i <= 99; i++) {
       var fieldId = i.toString().padLeft(2, '0');
       if (data.containsKey(fieldId)) {
-        var templateData = _parseTlv(data[fieldId]!, parentTag: 'additionalTemplates');
+        var templateData = _parseTlv(
+          data[fieldId]!,
+          parentTag: 'additionalTemplates',
+        );
         additionalTemplates.add(
           TemplateInformation(
             fieldId: fieldId,
