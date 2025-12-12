@@ -376,12 +376,13 @@ class QrCodeGenerator {
       return '$tag${value.length.toString().padLeft(2, '0')}$value';
     }
 
-    print('Most def $tag:$value');
-
     // Validate type
     switch (definition.type) {
       case EmvDataType.numeric:
-        if (!RegExp(r'^\d+$').hasMatch(value)) {
+        // Support decimals for amount fields (54, 56, 57)
+        final supportsDecimals = ['54', '56', '57'].contains(tag);
+        final pattern = supportsDecimals ? r'^\d+(\.\d+)?$' : r'^\d+$';
+        if (!RegExp(pattern).hasMatch(value)) {
           throw ArgumentError(
             'Tag $tag (ID: ${definition.id}) value "$value" is not numeric.',
           );

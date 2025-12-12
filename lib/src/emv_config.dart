@@ -340,8 +340,8 @@ const Map<String, EmvTagDefinition> emvTagDefinitions = {
     mandatory: true,
   ),
 
-  // ID 54: Transaction Amount (Optional) - ANS to support decimal points
-  '54': EmvTagDefinition(id: '54', type: EmvDataType.ans, maxLength: 14),
+  // ID 54: Transaction Amount (Optional) - Numeric with decimal support
+  '54': EmvTagDefinition(id: '54', type: EmvDataType.numeric, maxLength: 14),
 
   // ID 55: Tip or Convenience Indicator (Optional)
   '55': EmvTagDefinition(
@@ -351,11 +351,11 @@ const Map<String, EmvTagDefinition> emvTagDefinitions = {
     maxLength: 2,
   ),
 
-  // ID 56: Value of Convenience Fee Fixed (Optional) - ANS to support decimal points
-  '56': EmvTagDefinition(id: '56', type: EmvDataType.ans, maxLength: 13),
+  // ID 56: Value of Convenience Fee Fixed (Optional) - Numeric with decimal support
+  '56': EmvTagDefinition(id: '56', type: EmvDataType.numeric, maxLength: 13),
 
-  // ID 57: Value of Convenience Fee Percentage (Optional) - ANS to support decimal points
-  '57': EmvTagDefinition(id: '57', type: EmvDataType.ans, maxLength: 5),
+  // ID 57: Value of Convenience Fee Percentage (Optional) - Numeric with decimal support
+  '57': EmvTagDefinition(id: '57', type: EmvDataType.numeric, maxLength: 5),
 
   // ID 58: Country Code (Mandatory)
   '58': EmvTagDefinition(
