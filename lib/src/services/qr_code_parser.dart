@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:crclib/catalog.dart';
+import 'package:kenya_quick_response/src/emv_config.dart';
+import 'package:kenya_quick_response/src/models/emv_tag.dart';
 import '../models/additional_data.dart';
 import '../models/kenya_quick_response_payload.dart';
 import '../models/merchant_account_information.dart';
@@ -42,19 +44,6 @@ class QrCodeParser {
     }
 
     var data = _parseTlv(payloadWithoutCrc);
-    // print('Parsed top-level data: $data'); // Debug print - removed for clean output
-
-    // Helper function to get required value or throw error
-    String getRequired(String tag, String fieldName) {
-      if (!data.containsKey(tag) || data[tag]!.isEmpty) {
-        throw ArgumentError('Missing or empty $fieldName (Tag $tag).');
-      }
-      return data[tag]!;
-    }
-
-    // Check if this is an M-Pesa QR code
-    bool isMpesaQr =
-        data.containsKey('83') && data['83']!.contains('m-pesa.com');
 
     // Parse Merchant Account Information (Fields 02-51)
     // According to KE-QR Standard Table 7.3, at least one MUST be present
@@ -62,7 +51,10 @@ class QrCodeParser {
     for (var i = 2; i <= 51; i++) {
       var fieldId = i.toString().padLeft(2, '0');
       if (data.containsKey(fieldId)) {
-        var merchantAccountData = _parseTlv(data[fieldId]!);
+        var merchantAccountData = _parseTlv(
+          data[fieldId]!,
+          parentTag: 'merchantAccountSubTags',
+        );
         merchantAccountInformation.add(
           MerchantAccountInformation(
             fieldId: fieldId,
@@ -96,12 +88,16 @@ class QrCodeParser {
           tipOrConvenienceIndicator =
               TipOrConvenienceIndicator.percentageConvenienceFee;
           break;
+        default:
+          throw ArgumentError(
+            'Invalid TipOrConvenienceIndicator value: ${data['55']}',
+          );
       }
     }
 
     AdditionalData? additionalData;
     if (data.containsKey('62')) {
-      var additionalDataMap = _parseTlv(data['62']!);
+      var additionalDataMap = _parseTlv(data['62']!, parentTag: '62');
       additionalData = AdditionalData(
         billNumber: additionalDataMap['01'],
         mobileNumber: additionalDataMap['02'],
@@ -119,31 +115,18 @@ class QrCodeParser {
 
     MerchantInformationLanguageTemplate? merchantInformationLanguageTemplate;
     if (data.containsKey('64')) {
-      var merchantInfoMap = _parseTlv(data['64']!);
-      // Create a local helper function for getRequired on merchantInfoMap
-      String getRequiredMerchantInfo(String tag, String fieldName) {
-        if (!merchantInfoMap.containsKey(tag) ||
-            merchantInfoMap[tag]!.isEmpty) {
-          throw ArgumentError(
-            'Missing or empty $fieldName (Tag $tag) in Merchant Information Language Template.',
-          );
-        }
-        return merchantInfoMap[tag]!;
-      }
+      var merchantInfoMap = _parseTlv(data['64']!, parentTag: '64');
 
       merchantInformationLanguageTemplate = MerchantInformationLanguageTemplate(
-        languagePreference: getRequiredMerchantInfo(
-          '00',
-          'Language Preference',
-        ),
-        merchantName: getRequiredMerchantInfo('01', 'Merchant Name'),
-        merchantCity: getRequiredMerchantInfo('02', 'Merchant City'),
+        languagePreference: merchantInfoMap['00']!,
+        merchantName: merchantInfoMap['01']!,
+        merchantCity: merchantInfoMap['02']!,
       );
     }
 
     MerchantPremisesLocation? merchantPremisesLocation;
     if (data.containsKey('80')) {
-      var locationMap = _parseTlv(data['80']!);
+      var locationMap = _parseTlv(data['80']!, parentTag: '80');
       LocationDataProvider? provider;
       if (locationMap.containsKey('01')) {
         switch (locationMap['01']) {
@@ -168,25 +151,21 @@ class QrCodeParser {
     // Parse Field 81: Merchant USSD Information (nested TLV)
     MerchantUssdInformation? merchantUssdInformation;
     if (data.containsKey('81')) {
-      var ussdData = _parseTlv(data['81']!);
+      var ussdData = _parseTlv(data['81']!, parentTag: '81');
       merchantUssdInformation = MerchantUssdInformation(
         globallyUniqueIdentifier: ussdData['00'],
         paymentNetworkSpecificData: Map.from(ussdData)..remove('00'),
       );
-    } else if (!isMpesaQr) {
-      throw ArgumentError('Merchant USSD Information (Tag 81) is mandatory.');
     }
 
     // Parse Field 82: QR Timestamp Information (nested TLV)
     QrTimestampInformation? qrTimestampInformation;
     if (data.containsKey('82')) {
-      var timestampData = _parseTlv(data['82']!);
+      var timestampData = _parseTlv(data['82']!, parentTag: '82');
       qrTimestampInformation = QrTimestampInformation(
         globallyUniqueIdentifier: timestampData['00'],
         timestampData: Map.from(timestampData)..remove('00'),
       );
-    } else if (!isMpesaQr) {
-      throw ArgumentError('QR Timestamp Information (Tag 82) is mandatory.');
     }
 
     // Parse Fields 83-99: Additional Templates (nested TLV)
@@ -194,7 +173,7 @@ class QrCodeParser {
     for (var i = 83; i <= 99; i++) {
       var fieldId = i.toString().padLeft(2, '0');
       if (data.containsKey(fieldId)) {
-        var templateData = _parseTlv(data[fieldId]!);
+        var templateData = _parseTlv(data[fieldId]!, parentTag: fieldId);
         additionalTemplates.add(
           TemplateInformation(
             fieldId: fieldId,
@@ -206,17 +185,17 @@ class QrCodeParser {
     }
 
     return KenyaQuickResponsePayload(
-      payloadFormatIndicator: getRequired('00', 'Payload Format Indicator'),
-      pointOfInitiationMethod: getRequired('01', 'Point of Initiation Method'),
+      payloadFormatIndicator: data['00']!,
+      pointOfInitiationMethod: data['01']!,
       merchantAccountInformation: merchantAccountInformation,
       merchantCategoryCode: data['52'], // Optional field
-      transactionCurrency: getRequired('53', 'Transaction Currency'),
+      transactionCurrency: data['53']!,
       transactionAmount: data['54'], // Conditional field
       tipOrConvenienceIndicator: tipOrConvenienceIndicator,
       convenienceFeeFixed: data['56'],
       convenienceFeePercentage: data['57'],
-      countryCode: getRequired('58', 'Country Code'),
-      merchantName: getRequired('59', 'Merchant Name'),
+      countryCode: data['58']!,
+      merchantName: data['59']!,
       merchantCity: data['60'], // Optional field
       postalCode: data['61'], // Optional field
       merchantUssdInformation: merchantUssdInformation,
@@ -231,7 +210,7 @@ class QrCodeParser {
     );
   }
 
-  static Map<String, String> _parseTlv(String data) {
+  static Map<String, String> _parseTlv(String data, {String? parentTag}) {
     var map = <String, String>{};
     var i = 0;
     while (i < data.length) {
@@ -257,6 +236,71 @@ class QrCodeParser {
         );
       }
       var value = data.substring(i + 4, i + 4 + length);
+
+      // Validate against EMV tag definitions
+      Map<String, EmvTagDefinition>? definitionMap;
+      if (parentTag != null) {
+        definitionMap = emvNestedTagDefinitions[parentTag];
+      }
+      final definition = definitionMap != null
+          ? definitionMap[tag]
+          : emvTagDefinitions[tag];
+
+      if (definition != null) {
+        // Validate type
+        switch (definition.type) {
+          case EmvDataType.numeric:
+            if (!RegExp(r'^\d+$').hasMatch(value)) {
+              throw ArgumentError(
+                'Tag $tag (ID: ${definition.id}) value "$value" is not numeric.',
+              );
+            }
+            break;
+          case EmvDataType.alphanumeric:
+            if (!RegExp(r'^[a-zA-Z0-9]+$').hasMatch(value)) {
+              throw ArgumentError(
+                'Tag $tag (ID: ${definition.id}) value "$value" is not alphanumeric.',
+              );
+            }
+            break;
+          case EmvDataType.ans:
+            if (!RegExp(
+              r'''^[a-zA-Z0-9!"#$%&'()*+,\-./:;<=>?@\[\\\]^_`{|}~ ]*$''',
+            ).hasMatch(value)) {
+              throw ArgumentError(
+                'Tag $tag (ID: ${definition.id}) value "$value" is not ans.',
+              );
+            }
+            break;
+          case EmvDataType.string:
+          case EmvDataType.undefined:
+            // No specific regex for general string or undefined types
+            break;
+        }
+
+        // Validate length
+        if (definition.minLength != null &&
+            value.length < definition.minLength!) {
+          throw ArgumentError(
+            'Tag $tag (ID: ${definition.id}) value "$value" is too short. Min length: ${definition.minLength}',
+          );
+        }
+        if (definition.maxLength != null &&
+            value.length > definition.maxLength!) {
+          throw ArgumentError(
+            'Tag $tag (ID: ${definition.id}) value "$value" is too long. Max length: ${definition.maxLength}',
+          );
+        }
+
+        // Validate pattern if available
+        if (definition.pattern != null &&
+            !(definition.pattern as RegExp).hasMatch(value)) {
+          throw ArgumentError(
+            'Tag $tag (ID: ${definition.id}) value "$value" does not match required pattern.',
+          );
+        }
+      }
+
       map[tag] = value;
       i += 4 + length;
     }

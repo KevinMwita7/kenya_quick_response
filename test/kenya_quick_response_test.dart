@@ -23,7 +23,7 @@ void main() {
         countryCode: 'KE',
         merchantName: 'Awesome Merchant',
         merchantCity: 'Nairobi',
-        postalCode: '00100',
+        postalCode: '00',
         merchantUssdInformation: MerchantUssdInformation(
           globallyUniqueIdentifier: 'com.testpsp.ussd',
           paymentNetworkSpecificData: {'01': '*123#'},

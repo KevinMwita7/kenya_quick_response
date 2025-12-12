@@ -4,3 +4,6 @@
 
 ## 1.0.1
 - Minor formatting
+
+## 1.0.2
+- Added strict field validation
