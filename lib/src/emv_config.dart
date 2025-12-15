@@ -324,6 +324,7 @@ const Map<String, EmvTagDefinition> emvTagDefinitions = {
   ),
 
   // ID 52: Merchant Category Code (Optional)
+  // Should be standardized according to ISO 18245
   '52': EmvTagDefinition(
     id: '52',
     type: EmvDataType.numeric,

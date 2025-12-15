@@ -3,6 +3,7 @@ import 'package:crclib/catalog.dart';
 import 'package:kenya_quick_response/src/emv_config.dart';
 import 'package:kenya_quick_response/src/models/emv_tag.dart';
 import '../models/kenya_quick_response_payload.dart';
+
 import '../models/merchant_premises_location.dart';
 import '../models/tip_or_convenience_indicator.dart';
 
@@ -12,7 +13,7 @@ class QrCodeGenerator {
 
     // Mandatory fields
     parts.add(_validateAndTlv('00', payload.payloadFormatIndicator));
-    parts.add(_validateAndTlv('01', payload.pointOfInitiationMethod));
+    parts.add(_validateAndTlv('01', payload.pointOfInitiationMethod.value));
 
     // Merchant Account Information (Fields 02-51) - At least one MUST be present
     if (payload.merchantAccountInformation.isEmpty) {

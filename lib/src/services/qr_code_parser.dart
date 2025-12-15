@@ -10,6 +10,7 @@ import '../models/merchant_premises_location.dart';
 import '../models/merchant_ussd_information.dart';
 import '../models/qr_timestamp_information.dart';
 import '../models/template_information.dart';
+import '../models/point_of_initiation_method.dart';
 import '../models/tip_or_convenience_indicator.dart';
 
 class QrCodeParser {
@@ -189,7 +190,7 @@ class QrCodeParser {
 
     return KenyaQuickResponsePayload(
       payloadFormatIndicator: data['00']!,
-      pointOfInitiationMethod: data['01']!,
+      pointOfInitiationMethod: PointOfInitiationMethod.fromValue(data['01']!),
       merchantAccountInformation: merchantAccountInformation,
       merchantCategoryCode: data['52'], // Optional field
       transactionCurrency: data['53']!,

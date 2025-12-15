@@ -1,4 +1,5 @@
 import 'package:kenya_quick_response/kenya_quick_response.dart';
+import 'package:kenya_quick_response/src/models/point_of_initiation_method.dart';
 
 void main() {
   // The following testQr string has been sanitized to remove PII.
@@ -124,14 +125,14 @@ void main() {
   // Create a KeqrPayload object for generation
   var payloadToGenerate = KenyaQuickResponsePayload(
     payloadFormatIndicator: '01',
-    pointOfInitiationMethod: '12', // '11' for static, '12' for dynamic
+    pointOfInitiationMethod: PointOfInitiationMethod.dynamicMethod,
     merchantAccountInformation: [
       MerchantAccountInformation(
         fieldId: '28', // PSP merchant account identifier
         globallyUniqueIdentifier: 'ke.go.qr',
         paymentNetworkSpecificData: {
-          '01':
-              '1234567', // Payment network specific merchant ID. Must be a valid till/phone number
+          // Payment network specific merchant ID. Must be a valid till/phone number
+          '01': '1234567',
         },
       ),
     ],
@@ -167,6 +168,8 @@ void main() {
         MerchantChannelScanLocation.atMerchantPremises,
         MerchantChannelPresence.attended,
       ),
+      // The unique ID of device that made the request for callback routing
+      // terminalLabel: '12343456667'
     ),
     additionalTemplates: [
       TemplateInformation(
@@ -174,6 +177,11 @@ void main() {
         templateData: {'01': '02', '03': '00002', '04': '00000'},
         globallyUniqueIdentifier: 'm-pesa.com',
       ),
+      TemplateInformation(
+        fieldId: '84', 
+        templateData: {'01': '88baaac0-20b0-4aec-b175-ebe50590c6b0:88baaac0-20b0-4aec-b175-ebe50590c6b0'},
+        globallyUniqueIdentifier: 'whizmo.ke'
+      )
     ],
   );
 

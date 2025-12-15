@@ -1,4 +1,5 @@
 import 'package:kenya_quick_response/kenya_quick_response.dart';
+import 'package:kenya_quick_response/src/models/point_of_initiation_method.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -6,7 +7,7 @@ void main() {
     test('Round-trip test', () {
       final payload = KenyaQuickResponsePayload(
         payloadFormatIndicator: '01',
-        pointOfInitiationMethod: '12',
+        pointOfInitiationMethod: PointOfInitiationMethod.dynamicMethod,
         merchantAccountInformation: [
           MerchantAccountInformation(
             fieldId: '28',
@@ -57,8 +58,8 @@ void main() {
         payload.payloadFormatIndicator,
       );
       expect(
-        parsedPayload.pointOfInitiationMethod,
-        payload.pointOfInitiationMethod,
+        parsedPayload.pointOfInitiationMethod.value,
+        payload.pointOfInitiationMethod.value,
       );
 
       // Verify merchant account information
@@ -148,7 +149,7 @@ void main() {
     test('Round-trip test with merchantTaxId and merchantChannel', () {
       final payload = KenyaQuickResponsePayload(
         payloadFormatIndicator: '01',
-        pointOfInitiationMethod: '12',
+        pointOfInitiationMethod: PointOfInitiationMethod.dynamicMethod,
         merchantAccountInformation: [
           MerchantAccountInformation(
             fieldId: '28',

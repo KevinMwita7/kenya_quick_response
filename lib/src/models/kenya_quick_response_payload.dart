@@ -3,13 +3,14 @@ import 'merchant_account_information.dart';
 import 'merchant_information_language_template.dart';
 import 'merchant_premises_location.dart';
 import 'merchant_ussd_information.dart';
+import 'point_of_initiation_method.dart';
 import 'qr_timestamp_information.dart';
 import 'template_information.dart';
 import 'tip_or_convenience_indicator.dart';
 
 class KenyaQuickResponsePayload {
   final String payloadFormatIndicator;
-  final String pointOfInitiationMethod;
+  final PointOfInitiationMethod pointOfInitiationMethod;
 
   /// Merchant Account Information (Fields 02-51)
   /// At least one MUST be present according to KE-QR Standard Table 7.3
