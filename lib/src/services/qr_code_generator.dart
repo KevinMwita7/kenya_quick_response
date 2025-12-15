@@ -284,11 +284,8 @@ class QrCodeGenerator {
           ),
         );
       }
-      for (var entry
-          in payload
-              .merchantUssdInformation!
-              .paymentNetworkSpecificData
-              .entries) {
+      for (var entry in payload
+          .merchantUssdInformation!.paymentNetworkSpecificData.entries) {
         ussdParts.add(_validateAndTlv(entry.key, entry.value, parentTag: '81'));
       }
       parts.add(_validateAndTlv('81', ussdParts.join()));
@@ -356,9 +353,8 @@ class QrCodeGenerator {
     if (parentTag != null) {
       definitionMap = emvNestedTagDefinitions[parentTag];
     }
-    final definition = definitionMap != null
-        ? definitionMap[tag]
-        : emvTagDefinitions[tag];
+    final definition =
+        definitionMap != null ? definitionMap[tag] : emvTagDefinitions[tag];
 
     // Handle null or empty values first
     if (value == null || value.isEmpty) {

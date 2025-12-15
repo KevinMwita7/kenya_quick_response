@@ -30,11 +30,9 @@ void main() {
     // Print Merchant Account Information
     if (parsedPayload.merchantAccountInformation.isNotEmpty) {
       print('  Merchant Account Information:');
-      for (
-        var i = 0;
-        i < parsedPayload.merchantAccountInformation.length;
-        i++
-      ) {
+      for (var i = 0;
+          i < parsedPayload.merchantAccountInformation.length;
+          i++) {
         var account = parsedPayload.merchantAccountInformation[i];
         print('    [${i + 1}] Field ID: ${account.fieldId}');
         print(
@@ -178,10 +176,12 @@ void main() {
         globallyUniqueIdentifier: 'm-pesa.com',
       ),
       TemplateInformation(
-        fieldId: '84', 
-        templateData: {'01': '88baaac0-20b0-4aec-b175-ebe50590c6b0:88baaac0-20b0-4aec-b175-ebe50590c6b0'},
-        globallyUniqueIdentifier: 'whizmo.ke'
-      )
+          fieldId: '84',
+          templateData: {
+            '01':
+                '88baaac0-20b0-4aec-b175-ebe50590c6b0:88baaac0-20b0-4aec-b175-ebe50590c6b0'
+          },
+          globallyUniqueIdentifier: 'whizmo.ke')
     ],
   );
 

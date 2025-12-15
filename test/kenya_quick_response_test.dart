@@ -39,10 +39,10 @@ void main() {
         ),
         merchantInformationLanguageTemplate:
             MerchantInformationLanguageTemplate(
-              languagePreference: 'EN',
-              merchantName: 'Awesome Merchant',
-              merchantCity: 'Nairobi',
-            ),
+          languagePreference: 'EN',
+          merchantName: 'Awesome Merchant',
+          merchantCity: 'Nairobi',
+        ),
         merchantPremisesLocation: MerchantPremisesLocation(
           locationDataProvider: LocationDataProvider.gpsCoordinates,
           locationData: '-1.286389,36.817223',
@@ -71,8 +71,7 @@ void main() {
       );
       expect(
         parsedPayload
-            .merchantAccountInformation[0]
-            .paymentNetworkSpecificData['01'],
+            .merchantAccountInformation[0].paymentNetworkSpecificData['01'],
         '1234567890',
       );
       expect(parsedPayload.merchantAccountInformation[0].isPspAccount, true);

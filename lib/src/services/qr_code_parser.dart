@@ -33,10 +33,8 @@ class QrCodeParser {
     var calculatedCrc = Crc16CcittFalse().convert(
       utf8.encode('${payloadWithoutCrc}6304'),
     );
-    var calculatedCrcString = calculatedCrc
-        .toRadixString(16)
-        .toUpperCase()
-        .padLeft(4, '0');
+    var calculatedCrcString =
+        calculatedCrc.toRadixString(16).toUpperCase().padLeft(4, '0');
 
     if (calculatedCrcString != crcValue) {
       throw ArgumentError(
@@ -204,9 +202,8 @@ class QrCodeParser {
       postalCode: data['61'], // Optional field
       merchantUssdInformation: merchantUssdInformation,
       qrTimestampInformation: qrTimestampInformation,
-      additionalTemplates: additionalTemplates.isNotEmpty
-          ? additionalTemplates
-          : null,
+      additionalTemplates:
+          additionalTemplates.isNotEmpty ? additionalTemplates : null,
       additionalData: additionalData,
       merchantInformationLanguageTemplate: merchantInformationLanguageTemplate,
       merchantPremisesLocation: merchantPremisesLocation,
@@ -246,9 +243,8 @@ class QrCodeParser {
       if (parentTag != null) {
         definitionMap = emvNestedTagDefinitions[parentTag];
       }
-      final definition = definitionMap != null
-          ? definitionMap[tag]
-          : emvTagDefinitions[tag];
+      final definition =
+          definitionMap != null ? definitionMap[tag] : emvTagDefinitions[tag];
 
       if (definition != null) {
         // Validate type
