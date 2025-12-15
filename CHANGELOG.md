@@ -17,3 +17,6 @@
   - ID 59, 60: Changed to ANS type to support spaces and special characters
   - ID 61: Fixed to length 2 as per specification
   - ID 80, 81, 82: Changed to string type (composite TLV containers)
+
+## 1.0.3
+- Enumerate point of initiation method
