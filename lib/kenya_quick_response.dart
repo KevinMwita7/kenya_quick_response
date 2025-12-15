@@ -13,3 +13,4 @@ export 'src/models/merchant_channel.dart';
 export 'src/models/emv_tag.dart';
 export 'src/services/qr_code_generator.dart';
 export 'src/services/qr_code_parser.dart';
+export 'src/models/point_of_initiation_method.dart';

@@ -1,5 +1,4 @@
 import 'package:kenya_quick_response/kenya_quick_response.dart';
-import 'package:kenya_quick_response/src/models/point_of_initiation_method.dart';
 import 'package:test/test.dart';
 
 void main() {

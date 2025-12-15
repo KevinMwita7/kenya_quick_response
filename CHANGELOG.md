@@ -20,3 +20,6 @@
 
 ## 1.0.3
 - Enumerate point of initiation method
+
+## 1.0.4
+- Export PointOfInitiationMethod
